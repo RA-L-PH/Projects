@@ -44,8 +44,9 @@ function App() {
     );
   };
   
+  // Use basename to match the GitHub Pages path
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/ecommerce">
       <div className="app-container">
         <Navbar cartItemsCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)} />
         <main className="main-content">
