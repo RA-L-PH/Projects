@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://RA-L-PH.github.io/Projects/ecommerce",
+  "homepage": "https://RA-L-PH.github.io/ecommerce",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
