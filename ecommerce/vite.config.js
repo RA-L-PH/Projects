@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react-swc'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/Projects/ecommerce/', // Add this line for GitHub Pages deployment
+  base: '/ecommerce/', // Correct base path for GitHub Pages
 })
