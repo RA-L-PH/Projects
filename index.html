@@ -2,8 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/ecommerce/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#4a90e2" />
+    <meta name="description" content="ShopEasy - Your one-stop ecommerce solution" />
+    <link rel="manifest" href="/ecommerce/manifest.json" />
+    <link rel="apple-touch-icon" href="/ecommerce/icons/icon-192x192.png" />
     <title>ShopEasy - Online Shopping</title>
     <!-- GitHub Pages SPA redirect script -->
     <script type="text/javascript">
@@ -25,5 +29,18 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/ecommerce/service-worker.js')
+            .then(registration => {
+              console.log('Service Worker registered:', registration);
+            })
+            .catch(error => {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

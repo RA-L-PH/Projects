@@ -1,0 +1,23 @@
+{
+  "name": "ShopEasy - Online Shopping",
+  "short_name": "ShopEasy",
+  "description": "Your one-stop ecommerce solution",
+  "start_url": "/ecommerce/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4a90e2",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
