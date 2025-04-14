@@ -1,10 +1,13 @@
 // Service Worker for ShopEasy ecommerce app
-const CACHE_NAME = 'shopeasy-cache-v1';
+const CACHE_NAME = 'shopeasy-cache-v2';
 const urlsToCache = [
   '/ecommerce/',
   '/ecommerce/index.html',
   '/ecommerce/vite.svg',
-  '/ecommerce/manifest.json'
+  '/ecommerce/manifest.json',
+  '/ecommerce/404.html',
+  // Include assets directory where Vite outputs compiled files
+  '/ecommerce/assets/'
 ];
 
 self.addEventListener('install', event => {
@@ -12,7 +15,12 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache)
+          .catch(error => {
+            console.error('Failed to cache URLs:', error);
+            // Continue with installation even if some assets fail to cache
+            return Promise.resolve();
+          });
       })
   );
 });
@@ -43,7 +51,11 @@ self.addEventListener('fetch', event => {
 
             return response;
           }
-        );
+        ).catch(error => {
+          console.error('Fetch failed:', error);
+          // Optionally return a fallback response or an error page
+          return caches.match('/ecommerce/404.html');
+        });
       })
   );
 });
