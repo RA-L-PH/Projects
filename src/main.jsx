@@ -11,14 +11,12 @@ createRoot(document.getElementById('root')).render(
 
 // Register the service worker
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/ecommerce/service-worker.js') // Updated to include the base path
-      .then(registration => {
-        console.log('Service Worker registered with scope:', registration.scope);
-      })
-      .catch(error => {
-        console.error('Service Worker registration failed:', error);
-      });
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/ecommerce/service-worker.js');
+      console.log('Service Worker registered: ServiceWorkerRegistration', registration);
+    } catch (error) {
+      console.error('Service Worker registration failed:', error);
+    }
   });
 }

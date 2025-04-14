@@ -16,4 +16,20 @@ export default defineConfig({
   },
   // Ensure PWA assets are copied to the dist directory
   publicDir: 'public',
+  server: {
+    headers: {
+      'Content-Type': 'application/javascript'
+    }
+  },
+  resolve: {
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        '.js': 'jsx',
+        '.jsx': 'jsx'
+      }
+    }
+  }
 })

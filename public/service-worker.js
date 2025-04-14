@@ -1,55 +1,65 @@
+// Service Worker for ShopEasy ecommerce app
+const CACHE_NAME = 'shopeasy-cache-v1';
+const urlsToCache = [
+  '/ecommerce/',
+  '/ecommerce/index.html',
+  '/ecommerce/vite.svg',
+  '/ecommerce/manifest.json'
+];
+
 self.addEventListener('install', event => {
-  console.log('Service Worker installing.');
   event.waitUntil(
-    caches.open('ecommerce-cache-v2').then(cache => {
-      return cache.addAll([
-        '/ecommerce/',
-        '/ecommerce/index.html',
-        '/ecommerce/manifest.json',
-        '/ecommerce/assets/main-*.js',
-        '/ecommerce/assets/main-*.css',
-        '/ecommerce/vite.svg'
-      ]);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
   );
 });
 
-// Activate event
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then(
+          response => {
+            // Don't cache if it's not a valid response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // IMPORTANT: Clone the response. A response is a stream
+            // and it can only be consumed once.
+            const responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        );
+      })
+  );
+});
+
 self.addEventListener('activate', event => {
-  console.log('Service Worker activating.');
+  const cacheAllowlist = [CACHE_NAME];
+
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== 'ecommerce-cache-v2') {
-            console.log('Service Worker clearing old cache:', cache);
-            return caches.delete(cache);
+        cacheNames.map(cacheName => {
+          if (cacheAllowlist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
           }
         })
       );
-    })
-  );
-});
-
-// Fetch event
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request).then(fetchResponse => {
-        // Don't cache API calls
-        if (!event.request.url.includes('/api/')) {
-          return caches.open('ecommerce-cache-v2').then(cache => {
-            cache.put(event.request, fetchResponse.clone());
-            return fetchResponse;
-          });
-        }
-        return fetchResponse;
-      });
-    }).catch(() => {
-      // Fallback for HTML
-      if (event.request.headers.get('accept').includes('text/html')) {
-        return caches.match('/ecommerce/index.html');
-      }
     })
   );
 });
