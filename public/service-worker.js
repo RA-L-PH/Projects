@@ -1,12 +1,13 @@
 self.addEventListener('install', event => {
   console.log('Service Worker installing.');
   event.waitUntil(
-    caches.open('ecommerce-cache-v1').then(cache => {
+    caches.open('ecommerce-cache-v2').then(cache => {
       return cache.addAll([
         '/ecommerce/',
         '/ecommerce/index.html',
-        '/ecommerce/assets/index-*.js',
-        '/ecommerce/assets/index-*.css',
+        '/ecommerce/manifest.json',
+        '/ecommerce/assets/main-*.js',
+        '/ecommerce/assets/main-*.css',
         '/ecommerce/vite.svg'
       ]);
     })
@@ -20,7 +21,7 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cache => {
-          if (cache !== 'ecommerce-cache-v1') {
+          if (cache !== 'ecommerce-cache-v2') {
             console.log('Service Worker clearing old cache:', cache);
             return caches.delete(cache);
           }
@@ -37,7 +38,7 @@ self.addEventListener('fetch', event => {
       return response || fetch(event.request).then(fetchResponse => {
         // Don't cache API calls
         if (!event.request.url.includes('/api/')) {
-          return caches.open('ecommerce-cache-v1').then(cache => {
+          return caches.open('ecommerce-cache-v2').then(cache => {
             cache.put(event.request, fetchResponse.clone());
             return fetchResponse;
           });

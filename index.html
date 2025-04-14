@@ -27,7 +27,8 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./src/main.jsx"></script>
+    <!-- Remove direct reference to .jsx file which causes MIME type issues -->
+    <!-- Vite will inject the proper script references during build -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
