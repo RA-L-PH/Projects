@@ -1,0 +1,9 @@
+{
+  "name": "ShopEasy - Online Shopping",
+  "short_name": "ShopEasy",
+  "description": "Your one-stop ecommerce solution",
+  "start_url": "/ecommerce/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4a90e2"
+}
