@@ -1,26 +1,51 @@
 // Service Worker for ShopEasy ecommerce app
-const CACHE_NAME = 'shopeasy-cache-v2';
+const CACHE_NAME = 'shopeasy-cache-v3';
 const urlsToCache = [
   '/ecommerce/',
   '/ecommerce/index.html',
   '/ecommerce/vite.svg',
   '/ecommerce/manifest.json',
   '/ecommerce/404.html',
-  // Include assets directory where Vite outputs compiled files
+  // Cache the assets directory with compiled JS and CSS
   '/ecommerce/assets/'
 ];
+
+// Function to individually cache items to prevent all-or-nothing failures
+async function cacheResources(cache) {
+  const failedUrls = [];
+  
+  for (const url of urlsToCache) {
+    try {
+      // For directory entries like '/ecommerce/assets/', we skip them
+      // as fetch() can't directly fetch a directory
+      if (url.endsWith('/')) continue;
+      
+      const response = await fetch(url);
+      if (response.ok) {
+        await cache.put(url, response);
+        console.log(`Cached: ${url}`);
+      } else {
+        failedUrls.push(`${url} - Status: ${response.status}`);
+      }
+    } catch (error) {
+      failedUrls.push(`${url} - Error: ${error.message}`);
+    }
+  }
+  
+  if (failedUrls.length > 0) {
+    console.warn('Some URLs failed to cache:', failedUrls);
+  }
+  
+  return Promise.resolve();
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache)
-          .catch(error => {
-            console.error('Failed to cache URLs:', error);
-            // Continue with installation even if some assets fail to cache
-            return Promise.resolve();
-          });
+        // Use our custom function instead of cache.addAll
+        return cacheResources(cache);
       })
   );
 });
@@ -51,7 +76,11 @@ self.addEventListener('fetch', event => {
 
             return response;
           }
-        );
+        ).catch(error => {
+          console.error('Fetch failed:', error);
+          // Optionally return a fallback response or an error page
+          return caches.match('/ecommerce/404.html');
+        });
       })
   );
 });
